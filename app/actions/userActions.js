@@ -1,5 +1,5 @@
 import store from '../store'
 
-export function changeName(newName){
-  store.setIn(['user', 'name'], newName)
+export function changeUserName(newUserName) {
+  store.setIn(['user', 'name'], newUserName)
 }

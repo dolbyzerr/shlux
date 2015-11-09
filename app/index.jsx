@@ -1,6 +1,7 @@
 import React from 'react'
-import {asyncInc as inc, setCounter} from './actions/counterActions'
-import {changeName} from './actions/userActions'
+import TimeZonePicker from './components/TimeZonePicker'
+import TimeSlotChooser from './components/TimeSlotChooser'
+import MeetingInfo from './components/MeetingInfo'
 
 export default class App extends React.Component {
   render() {
@@ -8,23 +9,46 @@ export default class App extends React.Component {
 
     return (
       <div>
-        {counter}
-        <input type='text' value={user.name} onChange={this.onUserNameChange} />
-        <button onClick={this.onClick} disabled={loading}>Click me</button>
-        <button onClick={this.onSetCounterToOne}>Set counter to 1</button>
+        {this._renderStep()}
       </div>
     )
   }
 
-  onClick() {
-    inc()
-  }
+  _renderStep() {
+    const {step} = this.props
 
-  onSetCounterToOne() {
-    setCounter(1)
-  }
+    switch(step){
+      case 2:
+        const {user, meeting} = this.props
 
-  onUserNameChange(e) {
-    changeName(e.target.value)
+        return (
+          <MeetingInfo
+            user={user}
+            meeting={meeting}
+          />
+        )
+      case 1:
+        const {timeslots, meeting: {timeSlot}} = this.props
+
+        return (
+          <TimeSlotChooser
+            timeslots={timeslots}
+            selected={timeSlot}
+          />
+        )
+
+      case 0:
+      default:
+        const {countries, timeZones, meeting: {timeZone}, countryCode} = this.props
+
+        return (
+          <TimeZonePicker
+            countries={countries}
+            timeZones={timeZones}
+            timeZone={timeZone}
+            countryCode={countryCode}
+          />
+        )
+    }
   }
 }
