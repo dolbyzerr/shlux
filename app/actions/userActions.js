@@ -1,5 +1,5 @@
-import store from '../store'
+import {put} from 'enso'
 
 export function changeUserName(newUserName) {
-  store.setIn(['user', 'name'], newUserName)
+  put((state) => state.setIn(['user', 'name'], newUserName))
 }
