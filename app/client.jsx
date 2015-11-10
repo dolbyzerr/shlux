@@ -18,5 +18,3 @@ const initialState = I.fromJS({
 loop(initialState, (state) => {
   render(<App {...state.toJS()} />, appNode)
 })
-
-put((state) => state)

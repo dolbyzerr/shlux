@@ -21,6 +21,6 @@
   },
   "dependencies": {
     "babel-polyfill": "^6.0.16",
-    "enso": "kossnocorp/enso#6c9741a"
+    "enso": "kossnocorp/enso#8204325"
   }
 }
