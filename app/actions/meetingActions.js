@@ -1,13 +1,13 @@
-import store from '../store'
+import {put} from 'enso'
 
 export function changeDescription(newDescription){
-  store.setIn(['meeting', 'description'], newDescription)
+  put((state) => state.setIn(['meeting', 'description'], newDescription))
 }
 
 export function setTimeZone(timeZone) {
-  store.setIn(['meeting', 'timeZone'], timeZone)
+  put((state) => state.setIn(['meeting', 'timeZone'], timeZone))
 }
 
 export function selectTimeSlot(timeSlot) {
-  store.setIn(['meeting', 'timeSlot'], timeSlot)
+  put((state) => state.setIn(['meeting', 'timeSlot'], timeSlot))
 }

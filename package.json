@@ -18,5 +18,9 @@
     "react": "^0.14.2",
     "react-dom": "^0.14.2",
     "webpack-dev-server": "^1.12.1"
+  },
+  "dependencies": {
+    "babel-polyfill": "^6.0.16",
+    "enso": "kossnocorp/enso#6c9741a"
   }
 }
