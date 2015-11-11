@@ -2,7 +2,7 @@ import store from '../store'
 
 export function nextStep(e) {
   const nextStep = store.get('step') + 1
-  const timeZone = store.get(['meeting', 'timeZone'])
+  const timeZone = store.getIn(['meeting', 'timeZone'])
 
   if (nextStep == 1) {
     fetchSlots(timeZone)

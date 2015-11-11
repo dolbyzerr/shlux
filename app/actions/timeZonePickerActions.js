@@ -3,9 +3,10 @@ import {setTimeZone} from './meetingActions'
 
 export function changeCountry(countryCode) {
   store.set('countryCode', countryCode)
-  const timeZones = store.get(['timeZones', countryCode])
-  if (timeZones.size === 1) {
-    setTimeZone(timeZones.first().get('value'))
+  const timeZonesInCountry = store.getIn(['timeZones', countryCode])
+
+  if (timeZonesInCountry && timeZonesInCountry.size === 1) {
+    setTimeZone(timeZonesInCountry.first().get('value'))
   } else {
     setTimeZone(null)
   }
