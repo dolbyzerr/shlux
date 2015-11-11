@@ -55,19 +55,19 @@ class Store extends EventEmitter {
   }
 
   merge(value) {
-    this.onChange(this.data, this.data.merge(fromJS(value)))
+    this._onChange(this.data, this.data.merge(fromJS(value)))
   }
 
   mergeWith(merger, value) {
-    this.onChange(this.data, this.data.mergeWith(merger, fromJS(value)))
+    this._onChange(this.data, this.data.mergeWith(merger, fromJS(value)))
   }
 
   mergeDeep(value) {
-    this.onChange(this.data, this.data.mergeDeep(fromJS(value)))
+    this._onChange(this.data, this.data.mergeDeep(fromJS(value)))
   }
 
   mergeDeepWith(merger, value) {
-    this.onChange(this.data, this.data.mergeDeepWith(merger, fromJS(value)))
+    this._onChange(this.data, this.data.mergeDeepWith(merger, fromJS(value)))
   }
 
   _onChange(prevState, newState) {
