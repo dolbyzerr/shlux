@@ -1,7 +1,7 @@
 {
   "name": "shlux",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.0.1a",
+  "description": "Simple store for you fluxish application",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
