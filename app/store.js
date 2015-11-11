@@ -1,3 +1,3 @@
-import store from '../'
+import Store from '../'
 
-export default store
+export default new Store()

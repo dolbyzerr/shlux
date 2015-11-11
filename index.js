@@ -3,7 +3,7 @@ import EventEmitter from 'events'
 
 const immediateFunction = (window && window.requestAnimationFrame) || setTimeout
 
-class Store extends EventEmitter {
+export default class Store extends EventEmitter {
   constructor(){
     super()
     this.data = Immutable.Map()
@@ -83,5 +83,3 @@ class Store extends EventEmitter {
     }
   }
 }
-
-export default new Store()
