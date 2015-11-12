@@ -1,7 +1,7 @@
 {
   "name": "shlux",
-  "version": "0.0.3a",
-  "description": "Simple store for you fluxish application",
+  "version": "0.0.3-a",
+  "description": "Simple store for your fluxish application",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -18,5 +18,20 @@
     "react": "^0.14.2",
     "react-dom": "^0.14.2",
     "webpack-dev-server": "^1.12.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dolbyzerr/shlux.git"
+  },
+  "peerDependencies": {
+    "immutable": "^3.7.5"
+  },
+  "keywords": [
+    "flux",
+    "react"
+  ],
+  "bugs": {
+    "url": "https://github.com/dolbyzerr/shlux/issues"
+  },
+  "homepage": "https://github.com/dolbyzerr/shlux#readme"
 }
