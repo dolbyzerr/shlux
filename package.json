@@ -1,6 +1,6 @@
 {
   "name": "shlux",
-  "version": "0.0.3-a",
+  "version": "0.0.4-a",
   "description": "Simple store for your fluxish application",
   "main": "index.js",
   "scripts": {
