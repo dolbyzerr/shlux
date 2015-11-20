@@ -58,6 +58,10 @@ export default class Store extends EventEmitter {
     this._onChange(this.data, this.data.merge(fromJS(value)))
   }
 
+  mergeIn(key, value) {
+    this._onChange(this.data, this.data.mergeIn(key, fromJS(value)))
+  }
+
   mergeWith(merger, value) {
     this._onChange(this.data, this.data.mergeWith(merger, fromJS(value)))
   }
