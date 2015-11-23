@@ -15,7 +15,7 @@ import Store from 'shlux'
 
 const store = new Store()
 
-store.addListener('change', (props) => {
+store.on('change', (props) => {
     ReactDOM.render(<App {...props} />, document.getElementById('app'))
 })
 ```

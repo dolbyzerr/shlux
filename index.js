@@ -1,89 +1,80 @@
-import Immutable, {fromJS} from 'immutable'
-import EventEmitter from 'events'
+var Immutable = require('immutable')
+var Cursor = require('immutable/contrib/cursor')
+var fromJS = Immutable.fromJS
+var immediateFunction = ((typeof window !== 'undefined') && window.requestAnimationFrame) || (function(cb) { setTimeout(cb, 0) })
 
-const immediateFunction = (window && window.requestAnimationFrame) || setTimeout
+function Store() {
+  this._data = Immutable.Map()
+  this._listeners = {}
+  this._cursor = Cursor.from(this._data, [], this._onChange.bind(this))
+  this._changeFired = true
+}
 
-export default class Store extends EventEmitter {
-  constructor(){
-    super()
-    this.data = Immutable.Map()
-    this.changeFired = true
-  }
+Store.prototype = {
+  get: function(key) {
+    return this._cursor.get(key)
+  },
 
-  get(key) {
-    if (!key) {
-      return this.data.toJS()
+  set: function(key, value) {
+    this._cursor = this._cursor.set(key, fromJS(value))
+  },
+
+  on: function(eventName, cb) {
+    if (!this._listeners[eventName]) { this._listeners[eventName] = [] }
+    this._listeners[eventName].push({func: cb, once: false})
+  },
+
+  once: function(eventName, cb) {
+    if (!this._listeners[eventName]) { this._listeners[eventName] = [] }
+      this._listeners[eventName].push({func: cb, once: true})
+  },
+
+  off: function(eventName, cb) {
+    if (!eventName) {
+      this._listeners = {}
+    } else if(!cb) {
+      this._listeners[eventName] = []
     } else {
-      return this.data.get.apply(this.data, arguments)
-    }
-  }
-
-  has(key) {
-    return this.data.has(key)
-  }
-
-  contains(value) {
-    return this.data.contains(fromJS(value))
-  }
-
-  getIn(path) {
-    return this.data.getIn(path)
-  }
-
-  hasIn(path) {
-    return this.data.hasIn(path)
-  }
-
-  set(key, value) {
-    this._onChange(this.data, this.data.set(key, fromJS(value)))
-  }
-
-  setIn(key, value) {
-    this._onChange(this.data, this.data.setIn(key, fromJS(value)))
-  }
-
-  delete(key) {
-    this._onChange(this.data, this.data.delete(key))
-  }
-
-  deleteIn(key) {
-    this._onChange(this.data, this.data.deleteIn(key))
-  }
-
-  clear() {
-    this._onChange(this.data, this.data.clear())
-  }
-
-  merge(value) {
-    this._onChange(this.data, this.data.merge(fromJS(value)))
-  }
-
-  mergeIn(key, value) {
-    this._onChange(this.data, this.data.mergeIn(key, fromJS(value)))
-  }
-
-  mergeWith(merger, value) {
-    this._onChange(this.data, this.data.mergeWith(merger, fromJS(value)))
-  }
-
-  mergeDeep(value) {
-    this._onChange(this.data, this.data.mergeDeep(fromJS(value)))
-  }
-
-  mergeDeepWith(merger, value) {
-    this._onChange(this.data, this.data.mergeDeepWith(merger, fromJS(value)))
-  }
-
-  _onChange(prevState, newState) {
-    if (!prevState.equals(newState)) {
-      this.data = newState
-      if (this.changeFired) {
-        immediateFunction(() => {
-          this.emit('change', this.get())
-          this.changeFired = true
+      var listeners = this._listeners[eventName]
+      if (listeners) {
+        this._listeners = listeners.filter(function(listener) {
+          return listener.func !== cb
         })
-        this.changeFired = false
+      }
+    }
+  },
+
+  emit: function(eventName) {
+    if (eventName && this._listeners[eventName]) {
+      var off = this.off
+
+      // Parsing arguments in a simple non-leaking way
+      var args = new Array(arguments.length - 1)
+      for(var i=1; i <= args.length; i++) { args[i-1] = arguments[i] }
+
+      this._listeners[eventName].forEach(function(listener) {
+        listener.func.apply(this, args)
+        if (listener.once) { off(eventName, listener.func) }
+      })
+    }
+  },
+
+  listenerCount(eventName) {
+    return this._listeners[eventName] ? this._listeners[eventName].length : 0
+  },
+
+  _onChange: function(state, prevState) {
+    if (!prevState.equals(state)) {
+      this._data = state
+      if (this._changeFired && this.listenerCount('change') > 0) {
+        immediateFunction((function(){
+          this.emit('change', this._data.toJS())
+          this._changeFired = true
+        }).bind(this))
+        this._changeFired = false
       }
     }
   }
 }
+
+module.exports = Store
