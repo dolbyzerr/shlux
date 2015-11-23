@@ -57,4 +57,52 @@ describe('Shlux', () => {
     store.set('key2', 'value2')
     store.set('key3', 'value3')
   })
+
+  it('converts js objects to immutable structures', (done) => {
+    store.on('change', (state) => {
+      assert.deepEqual(state, {
+        obj: {
+          key1: 1,
+          key2: 2,
+          key3: 3
+        },
+        arr: ['a', 'b', 'c']
+      })
+      done()
+    })
+    store.set('obj', {
+      key1: 1,
+      key2: 2,
+      key3: 3
+    })
+    store.set('arr', ['a', 'b', 'c'])
+
+    assert(store.get('obj').get('key1') === 1)
+  })
+
+  context('merge', () => {
+    it('simply works', (done) => {
+      store.on('change', (state) => {
+        assert.deepEqual(state, {
+          a: 1,
+          b: [1, 2, 3],
+          c: 'string',
+          d: true
+        })
+        done()
+      })
+
+      store.merge({
+        a: 1,
+        b: [1,2,3],
+        c: 'string',
+        d: true
+      })
+
+      assert(store.get('a') === 1)
+      assert.deepEqual(store.get('b').toJS(), [1,2,3])
+      assert(store.get('c') === 'string')
+      assert(store.get('d') === true)
+    })
+  })
 })

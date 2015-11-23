@@ -12,11 +12,31 @@ function Store() {
 
 Store.prototype = {
   get: function(key) {
-    return this._cursor.get(key)
+    if (key === undefined) {
+      return this._cursor.toJS()
+    } else {
+      return this._cursor.get(key)
+    }
+  },
+
+  getIn: function(path) {
+    return this._cursor.getIn(path)
   },
 
   set: function(key, value) {
     this._cursor = this._cursor.set(key, fromJS(value))
+  },
+
+  setIn: function(path, value) {
+    this._cursor = this._cursor.setIn(path, fromJS(value))
+  },
+
+  merge: function(value) {
+    this._cursor = this._cursor.merge(fromJS(value))
+  },
+
+  mergeIn: function(path, value) {
+    this._cursor = this._cursor.mergeIn(path, fromJS(value))
   },
 
   on: function(eventName, cb) {
