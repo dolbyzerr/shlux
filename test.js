@@ -13,49 +13,61 @@ describe('Shlux', () => {
     assert(store.get('key') === 'value')
   })
 
-  it('fire onChange', (done) => {
-    store.on('change', (state) => {
-      assert(state.key === 'value')
-      done()
-    })
-    store.set('key', 'value')
-  })
-
-  it('fires several onChanges', () => {
-    var changeCounter = 0
-    var change = () => { if (changeCounter++ == 2) { done() } }
-    store.on('change', change)
-    store.on('change', change)
-    store.set('key', 'value')
-  })
-
-  it('fires onChanges on deep change', (done) => {
-    store.on('change', (state) => {
-      assert(state.deep.object.inside.key === 'newValue')
-      done()
-    })
-    store.set('deep', {
-      'object': {
-        'inside': {
-          'key': 'value'
-        }
-      }
-    })
-    store.get('deep').get('object').get('inside').set('key', 'newValue')
-  })
-
-  it('fires onChange only once on multiply changes', (done) => {
-    store.on('change', (state) => {
-      assert.deepEqual(state, {
-        key1: 'value1',
-        key2: 'value2',
-        key3: 'value3'
+  context('listeners', () => {
+    it('fires onChange', (done) => {
+      store.on('change', (state) => {
+        assert(state.key === 'value')
+        done()
       })
-      done()
+      store.set('key', 'value')
     })
-    store.set('key1', 'value1')
-    store.set('key2', 'value2')
-    store.set('key3', 'value3')
+
+    it('fires several onChanges', () => {
+      var changeCounter = 0
+      var change = () => { if (changeCounter++ == 2) { done() } }
+      store.on('change', change)
+      store.on('change', change)
+      store.set('key', 'value')
+    })
+
+    it('fires onChanges on deep change', (done) => {
+      store.on('change', (state) => {
+        assert(state.deep.object.inside.key === 'newValue')
+        done()
+      })
+      store.set('deep', {
+        'object': {
+          'inside': {
+            'key': 'value'
+          }
+        }
+      })
+      store.get('deep').get('object').get('inside').set('key', 'newValue')
+    })
+
+    it('fires onChange only once on multiply changes', (done) => {
+      store.on('change', (state) => {
+        assert.deepEqual(state, {
+          key1: 'value1',
+          key2: 'value2',
+          key3: 'value3'
+        })
+        done()
+      })
+      store.set('key1', 'value1')
+      store.set('key2', 'value2')
+      store.set('key3', 'value3')
+    })
+
+    it('fires "once" only once', (done) => {
+      store.once('change', () => {
+        done()
+      })
+      store.set('key1', 'value')
+      setTimeout(() => {
+        store.set('key2', 'value')
+      }, 0)
+    })
   })
 
   it('converts js objects to immutable structures', (done) => {
@@ -80,12 +92,37 @@ describe('Shlux', () => {
     assert(store.get('obj').get('key1') === 1)
   })
 
+  context('clear', () => {
+    it('clears', ()=> {
+      store.merge({a: 1})
+      store.clear()
+      store.merge({b: 2})
+      assert.deepEqual(store.get(), {b: 2})
+    })
+
+    it('chainable', ()=> {
+      assert.deepEqual(store.set('a', 1).clear().set('b', 2).get(), {b: 2})
+    })
+
+    it('triggers onChange', (done) => {
+      store.on('change', (props) => {
+        assert.deepEqual(props, {})
+        done()
+      })
+
+      store.merge({
+        a: 1
+      })
+      store.clear()
+    })
+  })
+
   context('merge', () => {
-    it('simply works', (done) => {
+    it('merges key', (done) => {
       store.on('change', (state) => {
         assert.deepEqual(state, {
           a: 1,
-          b: [1, 2, 3],
+          b: [1,2,3],
           c: 'string',
           d: true
         })
@@ -103,6 +140,78 @@ describe('Shlux', () => {
       assert.deepEqual(store.get('b').toJS(), [1,2,3])
       assert(store.get('c') === 'string')
       assert(store.get('d') === true)
+    })
+
+    it('merges in path', () => {
+      store.merge({
+        a: {
+          b: {
+            c: 1
+          }
+        }
+      })
+      store.mergeIn(['a', 'b', 'c'], {d: 1})
+      assert.deepEqual(store.get(), {
+        a: {
+          b: {
+            c: {
+              d: 1
+            }
+          }
+        }
+      })
+    })
+
+    it('chaining', () => {
+      assert(store.merge({
+        a: 1,
+        b: [1,2,3],
+        c: {key: 'value'},
+        d: true
+      }).getIn(['c', 'key']) === 'value')
+    })
+  })
+
+  context('delete', () => {
+    it('deletes key', ()=> {
+      store.merge({
+        a: 1,
+        b: 2
+      })
+      store.delete('a')
+      assert.deepEqual(store.get(), {b: 2})
+    })
+
+    it('deletes in path', () => {
+      store.merge({
+        a: {
+          b: 1,
+          c: 2
+        },
+      })
+      store.deleteIn(['a', 'b'])
+      assert.deepEqual(store.get(), {a: {c : 2}})
+    })
+
+    it('chainable', () => {
+      store.merge({
+        a: 1,
+        b: 2
+      })
+      store.delete('a').delete('b')
+      assert.deepEqual(store.get(), {})
+    })
+
+    it('triggers onChange', (done) => {
+      store.on('change', (props) => {
+        assert.deepEqual(props, {b: 2})
+        done()
+      })
+      store.merge({
+        a: 1,
+        b: 2
+      })
+      store.delete('a')
     })
   })
 })

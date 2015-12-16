@@ -11,6 +11,11 @@ function Store() {
 }
 
 Store.prototype = {
+  clear: function() {
+    this._cursor = this._cursor.clear()
+    return this
+  },
+
   get: function(key) {
     if (key === undefined) {
       return this._cursor.toJS()
@@ -25,18 +30,32 @@ Store.prototype = {
 
   set: function(key, value) {
     this._cursor = this._cursor.set(key, fromJS(value))
+    return this
   },
 
   setIn: function(path, value) {
     this._cursor = this._cursor.setIn(path, fromJS(value))
+    return this
   },
 
   merge: function(value) {
     this._cursor = this._cursor.merge(fromJS(value))
+    return this
   },
 
   mergeIn: function(path, value) {
     this._cursor = this._cursor.mergeIn(path, fromJS(value))
+    return this
+  },
+
+  delete: function(key) {
+    this._cursor = this._cursor.delete(key)
+    return this
+  },
+
+  deleteIn: function(path, value) {
+    this._cursor = this._cursor.deleteIn(path, value)
+    return this._data
   },
 
   on: function(eventName, cb) {
@@ -87,7 +106,7 @@ Store.prototype = {
     if (!prevState.equals(state)) {
       this._data = state
       if (this._changeFired && this.listenerCount('change') > 0) {
-        immediateFunction((function(){
+        immediateFunction((function() {
           this.emit('change', this._data.toJS())
           this._changeFired = true
         }).bind(this))
