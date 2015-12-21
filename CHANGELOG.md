@@ -1,3 +1,8 @@
+## 0.1.2
+
+### Bugfixes
+    - Bugfix ommited `function`
+
 ## 0.1.1
 
 ### Breaking changes
