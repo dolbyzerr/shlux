@@ -3,7 +3,7 @@ module.exports = {
   entry: "./client.jsx",
   output: {
     path: __dirname + "/dist",
-    filename: 'bundle.js'
+    filename: 'bundle.js',
   },
   module: {
     loaders: [

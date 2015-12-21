@@ -5,7 +5,7 @@ import store from './store'
 
 const appNode = document.getElementById('app')
 
-store.addListener('change', (props) => {
+store.on('change', (props) => {
   console.log(props)
   render(<App {...props} />, appNode)
 })
