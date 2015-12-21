@@ -8,4 +8,4 @@
   - Rewrite in simple es5 syntax
 
 ### Bugfixes
-  - Deep changes in the structure now fires onChange two
+  - Deep changes in the structure now fires onChange too

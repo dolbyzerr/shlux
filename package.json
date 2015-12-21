@@ -7,7 +7,7 @@
     "test": "mocha ./test",
     "autotest": "mocha --watch ./test",
     "build": "webpack",
-    "start": "webpack-dev-server"
+    "start": "webpack-dev-server --content-base example/"
   },
   "author": "dolbyzerr",
   "license": "ISC",
