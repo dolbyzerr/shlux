@@ -98,7 +98,7 @@ Store.prototype = {
     }
   },
 
-  listenerCount(eventName) {
+  listenerCount: function(eventName) {
     return this._listeners[eventName] ? this._listeners[eventName].length : 0
   },
 
