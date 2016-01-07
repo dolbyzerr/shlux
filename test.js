@@ -68,6 +68,26 @@ describe('Shlux', () => {
         store.set('key2', 'value')
       }, 0)
     })
+
+    it('emits second change event if data was changed inside first one', (done)=> {
+      store.merge({
+        a: 1,
+        b: 2,
+        c: {
+          d: 3
+        }
+      })
+      var changeCounter = 0
+      store.on('change', (data) => {
+        store.setIn(['c', 'd'], 5)
+        if (++changeCounter == 2) {
+          assert(data.c.d === 5)
+          done()
+        }
+      })
+
+      store.setIn(['c', 'd'], 4)
+    })
   })
 
   it('converts js objects to immutable structures', (done) => {

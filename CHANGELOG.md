@@ -1,3 +1,6 @@
+## 0.1.3
+    - Bugfix for not emmited event inside on change callback
+
 ## 0.1.2
 
 ### Bugfixes

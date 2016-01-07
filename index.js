@@ -107,8 +107,14 @@ Store.prototype = {
       this._data = state
       if (this._changeFired && this.listenerCount('change') > 0) {
         immediateFunction((function() {
+          var oldData = this._data
           this.emit('change', this._data.toJS())
           this._changeFired = true
+
+          // If data was changed inside on change callback
+          if (!oldData.equals(this._data)) {
+            this._onChange(this._data, oldData)
+          }
         }).bind(this))
         this._changeFired = false
       }
