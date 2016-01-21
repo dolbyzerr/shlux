@@ -1,3 +1,8 @@
+## 0.1.4
+
+### Features
+    -  Add `clearSync`, `setSync`, `setInSync`, `mergeSync`, `mergeInSync`, `deleteSync`, `deleteInSync`, synchronous alternatives to normal methods
+
 ## 0.1.3
     - Bugfix for not emmited event inside on change callback
 

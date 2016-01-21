@@ -8,6 +8,7 @@ function Store() {
   this._listeners = {}
   this._cursor = Cursor.from(this._data, [], this._onChange.bind(this))
   this._changeFired = true
+  this._syncUpdate = false
 }
 
 Store.prototype = {
@@ -55,7 +56,7 @@ Store.prototype = {
 
   deleteIn: function(path, value) {
     this._cursor = this._cursor.deleteIn(path, value)
-    return this._data
+    return this
   },
 
   on: function(eventName, cb) {
@@ -105,7 +106,10 @@ Store.prototype = {
   _onChange: function(state, prevState) {
     if (!prevState.equals(state)) {
       this._data = state
-      if (this._changeFired && this.listenerCount('change') > 0) {
+      if (this._syncUpdate) {
+        this.emit('change', this._data.toJS())
+        this._syncUpdate = false
+      } else if (this._changeFired && this.listenerCount('change') > 0) {
         immediateFunction((function() {
           var oldData = this._data
           this.emit('change', this._data.toJS())
@@ -121,5 +125,13 @@ Store.prototype = {
     }
   }
 }
+
+var changeMethods = ['clear', 'set', 'setIn', 'merge', 'mergeIn', 'delete', 'deleteIn']
+changeMethods.forEach(function(methodName) {
+  Store.prototype[methodName + 'Sync'] = function() {
+    this._syncUpdate = true
+    return Store.prototype[methodName].apply(this, arguments)
+  }
+})
 
 module.exports = Store

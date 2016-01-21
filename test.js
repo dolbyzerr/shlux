@@ -59,6 +59,19 @@ describe('Shlux', () => {
       store.set('key3', 'value3')
     })
 
+    it('fires onChange several times with sync update', (done) => {
+      var fireCounter = 0
+      store.on('change', (state) => {
+        fireCounter++
+        if (fireCounter === 3) {
+          done()
+        }
+      })
+      store.setSync('key1', 'value1')
+      store.setSync('key2', 'value2')
+      store.setSync('key3', 'value3')
+    })
+
     it('fires "once" only once', (done) => {
       store.once('change', () => {
         done()
